@@ -1,4 +1,4 @@
-﻿namespace Task_0
+﻿namespace Application
 {
     public class Calculator
     {
