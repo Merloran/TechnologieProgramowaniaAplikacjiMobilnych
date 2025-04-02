@@ -13,12 +13,12 @@ namespace Logic
 
         public static LogicAbstract CreateInstance(
             Action playerUpdateCallback,
-            Action<bool> reactiveElementsUpdateCallback,
+            Action<bool> reactiveUpdateCallback,
             DataAbstract? data = null)
         {
             return new Logic(data ?? DataAbstract.CreateInstance(),
                              playerUpdateCallback, 
-                             reactiveElementsUpdateCallback
+                             reactiveUpdateCallback
                              );
         }
     }
