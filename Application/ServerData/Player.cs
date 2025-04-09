@@ -1,9 +1,10 @@
-using System;
-using Data;
+﻿using ServerData;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
-namespace Logic
+namespace Data
 {
-    internal class LogicPlayer(string name, float x, float y, float speed) : ILogicPlayer
+    internal class Player(string name, float x, float y, float speed) : IPlayer
     {
         public string Name { get; set; } = name;
         public float X { get; set; } = x;

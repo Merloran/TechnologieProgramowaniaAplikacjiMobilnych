@@ -3,8 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:PresentationView"
-        xmlns:vm="clr-namespace:PresentationViewModel;assembly=Presentation"
         xmlns:presentationViewModel="clr-namespace:PresentationViewModel;assembly=PresentationViewModel"
         mc:Ignorable="d"
         Title="Gra Multiplayer" Height="500" Width="750"
@@ -23,8 +21,11 @@
                 <ItemsControl ItemsSource="{Binding Players}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Rectangle Fill="#4CAF50" Stroke="#388E3C" StrokeThickness="2"
-                                     Width="40" Height="40" RadiusX="5" RadiusY="5"/>
+                            <Canvas>
+                                <Label Content="{Binding Name}"  Canvas.Top="-20" Foreground="White"/>
+                                <Rectangle Fill="#4CAF50" Stroke="#388E3C" StrokeThickness="2"
+                                         Width="40" Height="40" RadiusX="5" RadiusY="5"/>
+                            </Canvas>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                     <ItemsControl.ItemsPanel>
@@ -48,27 +49,7 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left">
-                <Button Content="Utwórz grę" Margin="5" Padding="10,5" 
-                        Background="#4CAF50" Foreground="White" BorderThickness="0"
-                        Command="{Binding HostGameClick}"/>
-                <Button Content="Dołącz do gry" Margin="5" Padding="10,5" 
-                        Background="#2196F3" Foreground="White" BorderThickness="0"
-                        Command="{Binding JoinGameClick}"/>
-            </StackPanel>
-
-            <Canvas Grid.Column="0">
-                <Rectangle Height="40" Width="40" RadiusX="20" RadiusY="20"
-                           Stroke="White" StrokeThickness="2" Fill="#2196F3"
-                           Canvas.Left="{Binding ReactiveRectanglePosition.X}" 
-                           Canvas.Top="{Binding ReactiveRectanglePosition.Y}">
-                    <Rectangle.Effect>
-                        <DropShadowEffect Color="Black" ShadowDepth="2" Opacity="0.7"/>
-                    </Rectangle.Effect>
-                </Rectangle>
-            </Canvas>
-
-            <Grid Grid.Column="1" Width="100" Height="100">
+            <Grid Width="100" Height="100" Margin="265,0,265,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>

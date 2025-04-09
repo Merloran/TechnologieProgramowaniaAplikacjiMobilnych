@@ -1,7 +1,7 @@
 using System;
 using Data;
 
-namespace Logic
+namespace ServerLogic
 {
     internal class LogicPlayer(string name, float x, float y, float speed) : ILogicPlayer
     {

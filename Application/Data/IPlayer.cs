@@ -3,20 +3,15 @@ using System.Runtime.CompilerServices;
 
 namespace Data;
 
-public interface IPlayer : INotifyPropertyChanged
+public interface IPlayer
 {
-    IInput? _currentInput { get; }
-    void Move(IInput direction);
-    float Radius { get; }
-    float X { get; }
-    float Y { get; }
-    
-    string Name { get; }
-    
-    IVector2 Position { get; }
-    
-    public static IPlayer Create(string name, IVector2 position, float speed)
+    public string Name { get; set; }
+    public float X { get; set; }
+    public float Y { get; set; }
+    public float Speed { get; set; }
+
+    public static IPlayer CreateInstance(string name, float x, float y, float speed)
     {
-        return new Player(name, position, speed);
+        return new Player(name, x, y, speed);
     }
 }

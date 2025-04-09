@@ -1,66 +1,44 @@
 ﻿using PresentationViewModel.MVVMLight;
-using System.Collections.ObjectModel;
 using System.Windows.Input;
-using System.Windows.Media;
-using Data;
 using PresentationModel;
 
 namespace PresentationViewModel
 {
     public class ViewModel : ViewModelBase
     {
-        private Model _model;
-        private List<ModelPlayer>? _players;
-        public List<ModelPlayer>? Players
+        private IModel model;
+        private List<ViewModelPlayer> players;
+        public List<ViewModelPlayer> Players
         {
-            get => _players;
+            get => players;
             set
             {
-                _players = value;
+                players = value;
                 RaisePropertyChanged();
             }
         }
-
-        public ICommand JoinGameClick { get; set; }
-        public ICommand HostGameClick { get; set; }
 
         public ICommand MoveUpClick { get; set; }
         public ICommand MoveDownClick { get; set; }
         public ICommand MoveLeftClick {  get; set; }
         public ICommand MoveRightClick {  get; set; }
 
-        private IVector2 _reactiveRectanglePosition;
-        public IVector2 ReactiveRectanglePosition
+        public ViewModel()
         {
-            get => _reactiveRectanglePosition;
-            set
-            {
-                _reactiveRectanglePosition = value;
-                RaisePropertyChanged();
-            }
+            model = IModel.Create(UpdatePlayers);
+            players = new List<ViewModelPlayer>();
+
+            MoveUpClick    = new RelayCommand(model.MoveUp);
+            MoveDownClick  = new RelayCommand(model.MoveDown);
+            MoveLeftClick  = new RelayCommand(model.MoveLeft);
+            MoveRightClick = new RelayCommand(model.MoveRight);
         }
 
-        public ViewModel() 
+        public void UpdatePlayers()
         {
-            _model = new Model(UpdateDisplayedPlayers, UpdateReactiveElements);
-            JoinGameClick  = new RelayCommand(_model.AddPlayer);
-            HostGameClick  = new RelayCommand(_model.AddPlayer);
-            MoveUpClick    = new RelayCommand(_model.MoveUp);
-            MoveDownClick  = new RelayCommand(_model.MoveDown);
-            MoveLeftClick  = new RelayCommand(_model.MoveLeft);
-            MoveRightClick = new RelayCommand(_model.MoveRight);
-            ReactiveRectanglePosition = IVector2.Create(400.0f, 30.0f);
-            UpdateDisplayedPlayers();
-        }
-
-        public void UpdateDisplayedPlayers()
-        {
-            Players = _model.GetPlayers();
-        }
-
-        public void UpdateReactiveElements(bool b)
-        {
-            ReactiveRectanglePosition += b ? IVector2.Create(10.0f, 0.0f) : IVector2.Create(-10.0f, 0.0f);
+            Players = model.GetPlayers()
+                           .Select(player => new ViewModelPlayer(player.Name, player.X, player.Y, player.Speed))
+                           .ToList();
         }
     }
 }

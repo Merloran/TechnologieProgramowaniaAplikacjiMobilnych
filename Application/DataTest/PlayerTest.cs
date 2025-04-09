@@ -9,10 +9,9 @@ namespace DataTest
         [TestMethod]
         public void MoveTest()
         {
-            IPlayer player = IPlayer.Create("Player", IVector2.Create(0.0f, 0.0f), 1.0f);
-            Assert.AreEqual(player.Position, IVector2.Create(0, 0));
-            player.Move(IInput.Create("up")); 
-            Assert.AreEqual(player.Position, IVector2.Create(0, 1));
+            IPlayer player = IPlayer.CreateInstance("Player", 0.0f, 0.0f, 1.0f);
+            Assert.AreEqual(player.X, 0);
+            Assert.AreEqual(player.Y, 0);
         }
     }
 }

@@ -1,96 +1,81 @@
-﻿using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Diagnostics;
-using Data;
+﻿using Data;
 
 namespace Logic
 {
-    internal class Logic : LogicAbstract
+    internal class Logic : ILogicAbstract, IObserver<List<IPlayer>>
     {
-        private DataAbstract? _data;
+        public ILogicConnection connection { get; }
 
-        private Action _updateCallback;
-        private Action<bool> _reactiveElementsUpdateCallback;
+        public Action updateCallback;
 
-        public Logic(DataAbstract? data, Action playerUpdateCallback, Action<bool> reactiveElementsUpdateCallback)
+        private IDataAbstract data { get; }
+        private List<ILogicPlayer> players;
+        private IDisposable DataSubscriptionHandle;
+
+        public Logic(IDataAbstract data, Action playerUpdateCallback)
         {
-            this._data = data;
-            this._updateCallback = playerUpdateCallback;
-            this._reactiveElementsUpdateCallback = reactiveElementsUpdateCallback;
-            UpdateReactiveElements();
-        }
+            this.data = data;
+            this.updateCallback = playerUpdateCallback;
+            data.Subscribe(this);
 
-        public override bool AddPlayer(string name)
-        {
-            if (string.IsNullOrWhiteSpace(name))
+            if (data.connection != null)
             {
-                return false;
-            }
+                connection = new LogicConnection(data.connection);
 
-            var player = IPlayer.Create(name, IVector2.Create(100, 100), 20.0f);
-            player.PropertyChanged += UpdatePlayer;
-            _data?.Add(player);
+                connection.onStateChange += OnStateChanged;
+                connection.onDisconnect  += OnStateChanged;
+                connection.onError       += OnStateChanged;
+                connection.log           += Log;
 
-            UpdatePlayers(this, null);
-
-            return true;
-        }
-
-        public override bool RemovePlayer(string name)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                return false;
-            }
-
-            _data?.Remove(name);
-            return true;
-        }
-
-        public override int GetPlayerCount()
-        {
-            Debug.Assert(_data != null, nameof(_data) + " != null");
-            return _data.GetPlayerCount();
-        }
-
-        public override void MovePlayer(string dir)
-        {
-            List<IPlayer>? players = _data?.GetPlayers();
-            IInput input = IInput.Create(dir);
-            Debug.Assert(players != null, nameof(players) + " != null");
-            foreach (IPlayer player in players)
-            {
-                player.Move(input);
+                Task.Run(() => connection.Connect(new Uri(@"ws://localhost:13337")));
             }
         }
 
-        private void UpdatePlayer(object sender, PropertyChangedEventArgs e)
+        public List<ILogicPlayer> GetPlayers()
         {
-            _updateCallback.Invoke();
+            return players;
         }
 
-        private void UpdatePlayers(object sender, NotifyCollectionChangedEventArgs? e)
+        public async Task MovePlayer(Direction moveDirection)
         {
-            _updateCallback.Invoke();
+            await data.MovePlayer((Data.Direction)moveDirection);
         }
 
-        public override List<ILogicPlayer>? GetPlayers()
+        private void OnStateChanged()
         {
-            return _data?.GetPlayers()
-                    .Select(player => new LogicPlayer(player))
-                    .Cast<ILogicPlayer>()
-                    .ToList();
-        }
+            bool actual = data.connection.IsConnected();
 
-        private async void UpdateReactiveElements()
-        {
-            bool leftOrRight = false;
-            while (true)
+            if (!actual)
             {
-                await Task.Delay(1000);
-                leftOrRight = !leftOrRight;
-                _reactiveElementsUpdateCallback.Invoke(leftOrRight);
+                Task.Run(() => connection.Connect(new Uri(@"ws://localhost:13337")));
             }
+            else
+            {
+                data.RequestUpdate();
+            }
+        }
+
+        private void Log(string text)
+        {
+            Console.WriteLine(text);
+        }
+
+        public void OnCompleted()
+        {
+            DataSubscriptionHandle?.Dispose();
+        }
+
+        public void OnError(Exception error)
+        {
+
+        }
+
+        public void OnNext(List<IPlayer> value)
+        {
+            players = value.Select(player => new LogicPlayer(player.Name, player.X, player.Y, player.Speed))
+                           .Cast<ILogicPlayer>()
+                           .ToList();
+            updateCallback?.Invoke();
         }
     }
 }

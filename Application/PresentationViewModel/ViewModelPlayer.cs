@@ -1,9 +1,10 @@
 using System;
 using Data;
+using PresentationModel;
 
-namespace Logic
+namespace PresentationViewModel
 {
-    internal class LogicPlayer(string name, float x, float y, float speed) : ILogicPlayer
+    public class ViewModelPlayer(string name, float x, float y, float speed) : IModelPlayer
     {
         public string Name { get; set; } = name;
         public float X { get; set; } = x;

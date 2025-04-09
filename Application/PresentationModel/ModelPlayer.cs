@@ -1,20 +1,13 @@
 using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using Logic;
+using Data;
 
 namespace PresentationModel
 {
-    public class ModelPlayer(ILogicPlayer player) : INotifyPropertyChanged
+    internal class ModelPlayer(string name, float x, float y, float speed) : IModelPlayer
     {
-        public float X { get; private set; } = player.X;
-        public float Y { get; private set; } = player.Y;
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-    
-        protected void OnPropertyChanged([CallerMemberName] string? name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
+        public string Name { get; set; } = name;
+        public float X { get; set; } = x;
+        public float Y { get; set; } = y;
+        public float Speed { get; set; } = speed;
     }
 }

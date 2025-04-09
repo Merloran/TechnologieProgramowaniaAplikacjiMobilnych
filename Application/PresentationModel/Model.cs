@@ -2,45 +2,43 @@
 
 namespace PresentationModel
 {
-    public class Model(Action playerUpdateCallback, Action<bool> reactiveElementsUpdateCallback)
+    public class Model : IModel
     {
-        private LogicAbstract _logic = LogicAbstract.CreateInstance(playerUpdateCallback, reactiveElementsUpdateCallback);
+        public Action playerUpdateCallback;
+        private ILogicAbstract logic { get; }
 
-        public void AddPlayer()
+
+        public Model(ILogicAbstract logic)
         {
-            _logic.AddPlayer("test");
+            this.logic = logic;
         }
 
-        public void RemovePlayer()
+        public List<IModelPlayer> GetPlayers()
         {
-            _logic.RemovePlayer("test");
+            return logic.GetPlayers()
+                        .Select(player => new ModelPlayer(player.Name, player.X, player.Y, player.Speed))
+                        .Cast<IModelPlayer>()
+                        .ToList();
         }
 
         public void MoveUp()
         {
-            _logic.MovePlayer("up");
+            Task.Run(async () => await logic.MovePlayer(Direction.Up));
         }
 
         public void MoveDown()
         {
-            _logic.MovePlayer("down");
+            Task.Run(async () => await logic.MovePlayer(Direction.Down));
         }
 
         public void MoveLeft()
         {
-            _logic.MovePlayer("left");
+            Task.Run(async () => await logic.MovePlayer(Direction.Left));
         }
 
         public void MoveRight()
         {
-            _logic.MovePlayer("right");
-        }
-
-        public List<ModelPlayer>? GetPlayers()
-        {
-            return _logic.GetPlayers()
-                         .Select(player => new ModelPlayer(player))
-                         .ToList();
+            Task.Run(async () => await logic.MovePlayer(Direction.Right));
         }
     }
 }
