@@ -13,7 +13,7 @@ namespace ServerDataTest
             bool changed = false;
             data.onPlayersChange += () => { changed = true; };
 
-            List<IPlayer> players = data.GetPlayers();
+            List<IPlayer>? players = data.GetPlayers() as List<IPlayer>;
             Assert.IsNotNull(players);
             Assert.AreEqual(players.Count, 0);
 
@@ -26,7 +26,7 @@ namespace ServerDataTest
 
             Assert.IsTrue(changed);
 
-            players = data.GetPlayers();
+            players = data.GetPlayers() as List<IPlayer>;
             Assert.IsNotNull(players);
             Assert.AreEqual(players.Count, 1);
 
@@ -37,7 +37,7 @@ namespace ServerDataTest
 
             data.MovePlayer(playerId, Direction.Up);
 
-            players = data.GetPlayers();
+            players = data.GetPlayers() as List<IPlayer>;
             Assert.IsNotNull(players);
             Assert.AreEqual(players.Count, 1);
 

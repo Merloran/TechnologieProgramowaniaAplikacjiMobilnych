@@ -25,15 +25,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{2BF805
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerPresentation", "ServerPresentation\ServerPresentation.csproj", "{07635C2F-8997-432F-BFF0-31EFAE3580D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerData", "ServerData\ServerData.csproj", "{19F7C91C-2C9C-42C5-A78D-8F8957C46EC9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerData", "ServerData\ServerData.csproj", "{19F7C91C-2C9C-42C5-A78D-8F8957C46EC9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerLogic", "ServerLogic\ServerLogic.csproj", "{BD37E1B0-F3C3-417B-8FE0-C4B61E775097}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerLogic", "ServerLogic\ServerLogic.csproj", "{BD37E1B0-F3C3-417B-8FE0-C4B61E775097}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{AF5D0CC2-77A1-4250-B23E-DCB753AB689A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerDataTest", "ServerDataTest\ServerDataTest.csproj", "{09845871-AA0E-46EE-9773-1CF6E673E72E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerDataTest", "ServerDataTest\ServerDataTest.csproj", "{09845871-AA0E-46EE-9773-1CF6E673E72E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerLogicTest", "ServerLogicTest\ServerLogicTest.csproj", "{FE3E3A98-F8DA-47E4-BEAB-C0AFAA4846C6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerLogicTest", "ServerLogicTest\ServerLogicTest.csproj", "{FE3E3A98-F8DA-47E4-BEAB-C0AFAA4846C6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandsGenerator", "CommandsGenerator\CommandsGenerator.csproj", "{D7D2B53C-93E4-40D2-BBFB-E5696979FA98}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -89,6 +91,10 @@ Global
 		{FE3E3A98-F8DA-47E4-BEAB-C0AFAA4846C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE3E3A98-F8DA-47E4-BEAB-C0AFAA4846C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FE3E3A98-F8DA-47E4-BEAB-C0AFAA4846C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7D2B53C-93E4-40D2-BBFB-E5696979FA98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7D2B53C-93E4-40D2-BBFB-E5696979FA98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7D2B53C-93E4-40D2-BBFB-E5696979FA98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7D2B53C-93E4-40D2-BBFB-E5696979FA98}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

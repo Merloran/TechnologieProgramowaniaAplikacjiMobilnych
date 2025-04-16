@@ -5,10 +5,10 @@ namespace ServerLogic
     internal class Logic : ILogicAbstract
     {
         public IDataAbstract data { get; }
-        static List<string> playerNames = new List<string>();
-        static Random rnd = new Random();
+        static List<string> playerNames = [];
+        static Random rnd = new();
 
-        private List<Guid> botGuids = new List<Guid>();
+        private readonly List<Guid> botGuids = [];
 
         public Logic(IDataAbstract data)
         {
@@ -37,7 +37,7 @@ namespace ServerLogic
             MoveRandomBot();
         }
 
-        public List<ILogicPlayer> GetPlayers()
+        public IList<ILogicPlayer> GetPlayers()
         {
             return data.GetPlayers()
                        .Select(player => new LogicPlayer(player.Name, player.X, player.Y, player.Speed))

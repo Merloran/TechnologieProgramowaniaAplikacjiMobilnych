@@ -1,6 +1,3 @@
-using System;
-using Data;
-
 namespace Logic
 {
     internal class LogicPlayer(string name, float x, float y, float speed) : ILogicPlayer

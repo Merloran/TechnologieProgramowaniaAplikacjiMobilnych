@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.WebSockets;
+﻿using System.Net.WebSockets;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Data
 {
@@ -11,16 +7,16 @@ namespace Data
     {
         private readonly ClientWebSocket webSocket;
         private readonly Action<string> log;
-        private readonly Uri peer;
+        private readonly Uri uri;
 
         public event Action<string> onGetMessage;
         public event Action onClose;
         public event Action onError;
 
-        public SocketConnection(ClientWebSocket webSocket, Uri peer, Action<string> log)
+        public SocketConnection(ClientWebSocket webSocket, Uri uri, Action<string> log)
         {
             this.webSocket = webSocket;
-            this.peer = peer;
+            this.uri = uri;
             this.log = log;
             Task.Run(ProcessConnection);
         }

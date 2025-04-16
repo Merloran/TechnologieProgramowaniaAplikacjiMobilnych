@@ -10,7 +10,7 @@ namespace Logic
         public event Action? onError;
         public event Action? onDisconnect;
 
-        internal Data.IConnection connection { get; private set; }
+        internal Data.IConnection connection { get; }
 
         public LogicConnection(Data.IConnection connection)
         {

@@ -10,6 +10,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="NJsonSchema.NewtonsoftJson" Version="11.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\PresentationViewModel\PresentationViewModel.csproj" />
   </ItemGroup>
 

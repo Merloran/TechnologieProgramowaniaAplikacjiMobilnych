@@ -10,7 +10,7 @@ namespace ServerPresentation
         public event Action onClose;
         public event Action onError;
 
-        private WebSocket webSocket;
+        private readonly WebSocket webSocket;
         private IPEndPoint remoteEndPoint;
         private Action<string> log;
         private Uri uri;
@@ -35,6 +35,11 @@ namespace ServerPresentation
 
         public Task SendTask(string message)
         {
+            if (webSocket.State != WebSocketState.Open)
+            {
+                return Task.CompletedTask;
+            }
+
             return webSocket.SendAsync(Encoding.UTF8.GetBytes(message).ToArray(),
                                        WebSocketMessageType.Text, 
                                        true, 

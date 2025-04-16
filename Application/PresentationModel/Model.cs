@@ -13,7 +13,7 @@ namespace PresentationModel
             this.logic = logic;
         }
 
-        public List<IModelPlayer> GetPlayers()
+        public IList<IModelPlayer> GetPlayers()
         {
             return logic.GetPlayers()
                         .Select(player => new ModelPlayer(player.Name, player.X, player.Y, player.Speed))

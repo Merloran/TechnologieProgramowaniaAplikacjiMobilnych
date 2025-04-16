@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Collections.Specialized;
+﻿using Newtonsoft.Json.Linq;
 using System.Text.Json;
 
 namespace Data
@@ -18,7 +17,7 @@ namespace Data
         {
             connection = connectionService ?? new Connection();
             connection.onGetMessage += OnGetMessage;
-            observers  = new HashSet<IObserver<List<IPlayer>>>();
+            observers  = [];
         }
 
         ~Data()
@@ -30,14 +29,14 @@ namespace Data
             }
         }
 
-        public List<IPlayer> GetPlayers()
+        public IList<IPlayer> GetPlayers()
         {
             return players;
         }
 
         public void RemovePlayer(string name)
         {
-            players.Remove(players.Where(i => i.Name == name).Single());
+            players.Remove(players.Single(i => i.Name == name));
         }
 
         public async Task MovePlayer(Direction direction)
@@ -57,51 +56,50 @@ namespace Data
 
         public void OnGetMessage(string message)
         {
-            if (connection == null)
+            Headers? header = null;
+            JObject obj = JObject.Parse(message);
+            if (obj.TryGetValue("Header", out JToken? value))
             {
-                return;
+                header = value.ToObject<Headers>();
             }
 
-            string header = Headers.GetHeader(message);
-            if (header == null)
+            switch (header)
             {
-                return;
-            }
-
-            if (header == Headers.JoinResponse)
-            {
-                JoinResponse response = JsonSerializer.Deserialize<JoinResponse>(message);
-                ourPlayerId = response.GuidForPlayer;
-
-                RequestUpdate();
-            }
-
-            if (header == Headers.UpdatePlayersResponse)
-            {
-                UpdatePlayersResponse response = JsonSerializer.Deserialize<UpdatePlayersResponse>(message);
-                players = new List<IPlayer>();
-                foreach (PlayerData p in response.Players)
+                case null:
+                    return;
+                case Headers.JoinResponse:
                 {
-                    players.Add(new Player(p.Name, p.X, p.Y, p.Speed));
-                }
-                foreach (IObserver<List<IPlayer>>? observer in observers)
-                {
-                    observer.OnNext(new List<IPlayer>(players));
-                }
-            }
+                    JoinResponse response = JsonSerializer.Deserialize<JoinResponse>(message);
+                    ourPlayerId = response.GuidForPlayer;
 
-            if (header == Headers.MovePlayerResponse)
-            {
-                MovePlayerResponse response = JsonSerializer.Deserialize<MovePlayerResponse>(message);
+                    RequestUpdate();
+                    break;
+                }
+                case Headers.UpdatePlayersResponse:
+                {
+                    UpdatePlayersResponse response = JsonSerializer.Deserialize<UpdatePlayersResponse>(message);
+                    players = [];
+                    foreach (PlayerData p in response.Players)
+                    {
+                        players.Add(new Player(p.Name, p.X, p.Y, p.Speed));
+                    }
+                    foreach (IObserver<List<IPlayer>>? observer in observers)
+                    {
+                        observer.OnNext([..players]);
+                    }
+
+                    break;
+                }
+                case Headers.MovePlayerResponse:
+                {
+                    MovePlayerResponse response = JsonSerializer.Deserialize<MovePlayerResponse>(message);
+                    break;
+                }
             }
         }
 
         public void RequestUpdate()
         {
-            if (connection == null)
-            {
-                return;
-            }
             GetPlayersCommand cmd = new GetPlayersCommand();
             connection.SendAsync(JsonSerializer.Serialize(cmd));
         }

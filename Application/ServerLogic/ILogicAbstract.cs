@@ -1,6 +1,4 @@
 ﻿using ServerData;
-using System;
-using System.Collections.Generic;
 namespace ServerLogic
 {
     public enum Direction
@@ -13,14 +11,21 @@ namespace ServerLogic
 
     public interface ILogicAbstract
     {
-        public List<ILogicPlayer> GetPlayers();
+        private static ILogicAbstract? instance;
+        public IList<ILogicPlayer> GetPlayers();
         public Guid AddPlayer();
         public void MovePlayer(Guid playerId, Direction direction);
-        public static ILogicAbstract CreateInstance(Action UpdatePlayersCallback, IDataAbstract? data = null)
+        public static ILogicAbstract CreateInstance(Action? updatePlayersCallback, IDataAbstract? data = null)
         {
+            if (instance != null)
+            {
+                return instance;
+            }
+
             IDataAbstract dataApi = data ?? IDataAbstract.CreateInstance();
-            dataApi.onPlayersChange += UpdatePlayersCallback;
-            return new Logic(dataApi);
+            dataApi.onPlayersChange += updatePlayersCallback;
+            return instance ??= new Logic(dataApi);
+
         }
 
     }

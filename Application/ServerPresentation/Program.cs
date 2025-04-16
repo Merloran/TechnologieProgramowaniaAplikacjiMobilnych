@@ -1,12 +1,8 @@
-﻿using ServerLogic;
+﻿using Newtonsoft.Json.Linq;
+using ServerLogic;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.PortableExecutable;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ServerPresentation
 {
@@ -57,36 +53,43 @@ namespace ServerPresentation
                 return;
             }
 
-            string header = Headers.GetHeader(message);
-            if (header == null) return;
-
-            if (header == Headers.MovePlayerCommand)
+            Headers? header = null;
+            JObject obj = JObject.Parse(message);
+            if (obj.TryGetValue("Header", out JToken? value))
             {
-                MovePlayerCommand cmd = JsonSerializer.Deserialize<MovePlayerCommand>(message);
-
-                MovePlayerResponse response = new MovePlayerResponse
-                {
-                    TransactionId = cmd.TransactionId
-                };
-                try
-                {
-                    logic.MovePlayer(cmd.PlayerId, (ServerLogic.Direction)cmd.Direction);
-                    response.IsSuccess = true;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"{ex} --- Failed to move the player");
-                    response.IsSuccess = false;
-                }
-                await connection.SendAsync(JsonSerializer.Serialize(response));
-
-                UpdatePlayers();
-                return;
+                header = value.ToObject<Headers>();
             }
-            if (header == Headers.GetPlayersCommand)
+
+            switch (header)
             {
-                UpdatePlayers();
-                return;
+                case null:
+                    return;
+                case Headers.MovePlayerCommand:
+                {
+                    MovePlayerCommand cmd = JsonSerializer.Deserialize<MovePlayerCommand>(message);
+
+                    MovePlayerResponse response = new MovePlayerResponse
+                    {
+                        TransactionId = cmd.TransactionId
+                    };
+                    try
+                    {
+                        logic.MovePlayer(cmd.PlayerId, (ServerLogic.Direction)cmd.Direction);
+                        response.IsSuccess = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"{ex} --- Failed to move the player");
+                        response.IsSuccess = false;
+                    }
+                    await connection.SendAsync(JsonSerializer.Serialize(response));
+
+                    UpdatePlayers();
+                    return;
+                }
+                case Headers.GetPlayersCommand:
+                    UpdatePlayers();
+                    return;
             }
         }
 
@@ -110,7 +113,7 @@ namespace ServerPresentation
 
         private void OnError()
         {
-            Console.WriteLine("Connection errored out");
+            Console.WriteLine("Connection error");
         }
 
         private void OnClose()

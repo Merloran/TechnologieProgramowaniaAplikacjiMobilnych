@@ -6,7 +6,7 @@ namespace PresentationViewModel
 {
     public class ViewModel : ViewModelBase
     {
-        private IModel model;
+        private readonly IModel model;
         private List<ViewModelPlayer> players;
         public List<ViewModelPlayer> Players
         {
@@ -25,8 +25,8 @@ namespace PresentationViewModel
 
         public ViewModel()
         {
-            model = IModel.Create(UpdatePlayers);
-            players = new List<ViewModelPlayer>();
+            model = IModel.CreateInstance(UpdatePlayers);
+            players = [];
 
             MoveUpClick    = new RelayCommand(model.MoveUp);
             MoveDownClick  = new RelayCommand(model.MoveDown);

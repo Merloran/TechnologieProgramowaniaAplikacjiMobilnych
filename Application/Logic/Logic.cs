@@ -10,7 +10,7 @@ namespace Logic
 
         private IDataAbstract data { get; }
         private List<ILogicPlayer> players;
-        private IDisposable DataSubscriptionHandle;
+        private IDisposable dataSubscriptionHandle;
 
         public Logic(IDataAbstract data, Action playerUpdateCallback)
         {
@@ -18,20 +18,22 @@ namespace Logic
             this.updateCallback = playerUpdateCallback;
             data.Subscribe(this);
 
-            if (data.connection != null)
+            if (data.connection == null)
             {
-                connection = new LogicConnection(data.connection);
-
-                connection.onStateChange += OnStateChanged;
-                connection.onDisconnect  += OnStateChanged;
-                connection.onError       += OnStateChanged;
-                connection.log           += Log;
-
-                Task.Run(() => connection.Connect(new Uri(@"ws://localhost:13337")));
+                return;
             }
+
+            connection = new LogicConnection(data.connection);
+
+            connection.onStateChange += OnStateChanged;
+            connection.onDisconnect  += OnStateChanged;
+            connection.onError       += OnStateChanged;
+            connection.log           += Log;
+
+            Task.Run(() => connection.Connect(new Uri(@"ws://localhost:13337")));
         }
 
-        public List<ILogicPlayer> GetPlayers()
+        public IList<ILogicPlayer> GetPlayers()
         {
             return players;
         }
@@ -62,7 +64,7 @@ namespace Logic
 
         public void OnCompleted()
         {
-            DataSubscriptionHandle?.Dispose();
+            dataSubscriptionHandle?.Dispose();
         }
 
         public void OnError(Exception error)

@@ -1,22 +1,28 @@
 using ServerData;
 using ServerLogic;
+using Direction = ServerData.Direction;
 
 namespace ServerLogicTest
 {
     internal class MockData : IDataAbstract
     {
-        public static Guid testGuid = new Guid();
+        public static Guid testGuid = Guid.Empty;
 
-        public event Action onPlayersChange;
+        public event Action? onPlayersChange;
 
         public Guid AddPlayer(string name, float x, float y, float speed)
         {
             return testGuid;
         }
 
+        IList<IPlayer> IDataAbstract.GetPlayers()
+        {
+            return GetPlayers();
+        }
+
         public List<IPlayer> GetPlayers()
         {
-            return new List<IPlayer>();
+            return [];
         }
 
         public bool HasPlayer(Guid playerId)
@@ -24,7 +30,7 @@ namespace ServerLogicTest
             return false;
         }
 
-        public void MovePlayer(Guid playerId, ServerData.Direction direction)
+        public void MovePlayer(Guid playerId, Direction direction)
         {
             onPlayersChange.Invoke();
         }
@@ -45,7 +51,7 @@ namespace ServerLogicTest
         {
             ILogicAbstract logic = ILogicAbstract.CreateInstance(null, new MockData());
 
-            Action act = () => { logic.MovePlayer(new Guid(), ServerLogic.Direction.Up); };
+            Action act = () => { logic.MovePlayer(Guid.Empty, ServerLogic.Direction.Up); };
 
             Assert.ThrowsException<KeyNotFoundException>(act);
         }

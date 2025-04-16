@@ -3,8 +3,8 @@
     internal class Data : IDataAbstract
     {
         public event Action onPlayersChange;
-        private Dictionary<Guid, IPlayer> players = new Dictionary<Guid, IPlayer>();
-        private object playersLock = new object();
+        private readonly Dictionary<Guid, IPlayer> players = new();
+        private readonly object playersLock = new();
 
         public Guid AddPlayer(string name, float x, float y, float speed)
         {
@@ -17,12 +17,12 @@
             return newGuid;
         }
 
-        public List<IPlayer> GetPlayers()
+        public IList<IPlayer> GetPlayers()
         {
-            List<IPlayer> result = new List<IPlayer>();
+            List<IPlayer> result = [];
             lock (playersLock)
             {
-                result.AddRange(players.Values.Select(item => (IPlayer)item)); //TODO: !!!
+                result.AddRange(players.Values.Select(item => item));
             }
             return result;
         }
@@ -31,34 +31,35 @@
         {
             lock (playersLock)
             {
-                if (players.ContainsKey(playerId))
+                if (!players.TryGetValue(playerId, out IPlayer? player))
                 {
-                    IPlayer player = players[playerId];
-                    switch (direction)
-                    {
-                        case Direction.Up:
-                        {
-                            player.Y -= player.Speed;
-                            break;
-                        }
-                        case Direction.Down:
-                        {
-                            player.Y += player.Speed;
-                            break;
-                        }
-                        case Direction.Left:
-                        {
-                            player.X -= player.Speed;
-                            break;
-                        }
-                        case Direction.Right:
-                        {
-                            player.X += player.Speed;
-                            break;
-                        }
-                    }
-                    onPlayersChange.Invoke();
+                    return;
                 }
+
+                switch (direction)
+                {
+                    case Direction.Up:
+                    {
+                        player.Y -= player.Speed;
+                        break;
+                    }
+                    case Direction.Down:
+                    {
+                        player.Y += player.Speed;
+                        break;
+                    }
+                    case Direction.Left:
+                    {
+                        player.X -= player.Speed;
+                        break;
+                    }
+                    case Direction.Right:
+                    {
+                        player.X += player.Speed;
+                        break;
+                    }
+                }
+                onPlayersChange.Invoke();
             }
         }
 

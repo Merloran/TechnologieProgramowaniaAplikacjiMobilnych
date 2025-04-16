@@ -12,12 +12,12 @@ namespace Logic
 
     public interface ILogicAbstract
     {
-        public List<ILogicPlayer> GetPlayers();
+        private static ILogicAbstract? instance;
+        public IList<ILogicPlayer> GetPlayers();
         public Task MovePlayer(Direction moveDirection);
         public static ILogicAbstract CreateInstance(Action playerUpdateCallback, IDataAbstract? data = null)
         {
-            return new Logic(data ?? IDataAbstract.CreateInstance(null),
-                             playerUpdateCallback);
+            return instance ??= new Logic(data ?? IDataAbstract.CreateInstance(null), playerUpdateCallback);
         }
     }
 }

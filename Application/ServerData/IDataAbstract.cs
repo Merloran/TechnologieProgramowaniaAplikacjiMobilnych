@@ -10,12 +10,13 @@
 
     public interface IDataAbstract
     {
+        private static IDataAbstract? instance;
         public event Action onPlayersChange;
-        public abstract List<IPlayer> GetPlayers();
+        public IList<IPlayer> GetPlayers();
 
         public static IDataAbstract CreateInstance()
         {
-            return new Data();
+            return instance ??= new Data();
         }
 
         public void MovePlayer(Guid playerId, Direction direction);
